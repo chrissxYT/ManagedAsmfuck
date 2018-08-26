@@ -1,0 +1,11 @@
+/home/chrissx/ManagedAsmfuck/_build/x64/ManagedAsmfuck.deps.json
+/home/chrissx/ManagedAsmfuck/_build/x64/ManagedAsmfuck.runtimeconfig.json
+/home/chrissx/ManagedAsmfuck/_build/x64/ManagedAsmfuck.runtimeconfig.dev.json
+/home/chrissx/ManagedAsmfuck/_build/x64/ManagedAsmfuck.dll
+/home/chrissx/ManagedAsmfuck/_build/x64/ManagedAsmfuck.pdb
+/home/chrissx/ManagedAsmfuck/obj/x64/Release/netcoreapp2.1/ManagedAsmfuck.csprojAssemblyReference.cache
+/home/chrissx/ManagedAsmfuck/obj/x64/Release/netcoreapp2.1/ManagedAsmfuck.csproj.CoreCompileInputs.cache
+/home/chrissx/ManagedAsmfuck/obj/x64/Release/netcoreapp2.1/ManagedAsmfuck.AssemblyInfoInputs.cache
+/home/chrissx/ManagedAsmfuck/obj/x64/Release/netcoreapp2.1/ManagedAsmfuck.AssemblyInfo.cs
+/home/chrissx/ManagedAsmfuck/obj/x64/Release/netcoreapp2.1/ManagedAsmfuck.dll
+/home/chrissx/ManagedAsmfuck/obj/x64/Release/netcoreapp2.1/ManagedAsmfuck.pdb
