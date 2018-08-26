@@ -34,6 +34,8 @@ namespace ManagedAsmfuck
                 Console.WriteLine("    bin2asm");
                 Console.WriteLine("    bin2elf");
                 Console.WriteLine("    runabin");
+                Console.WriteLine("    asm2bfk");
+                Console.WriteLine("    bin2bfk");
                 Console.WriteLine("[outputfile] can be left out if the operation is runabin");
                 Environment.Exit(1);
             }
@@ -145,6 +147,69 @@ namespace ManagedAsmfuck
                     else if(b == 8)
                         Console.Write((char)t[tp]);
                 }
+            }
+            else if(args[0] == "asm2bfk")
+            {
+                string[] lines = File.ReadAllLines(input);
+                List<byte> bytes = new List<byte>();
+                foreach (string l in lines)
+                {
+                    if(l == "" || l == nop)
+                        continue;
+                    else if(l == inc)
+                        bytes.Add(43);
+                    else if(l == dec)
+                        bytes.Add(45);
+                    else if(l == tsl)
+                        bytes.Add(60);
+                    else if(l == tsr)
+                        bytes.Add(62);
+                    else if(l == sjp)
+                        bytes.Add(91);
+                    else if(l == jpb)
+                        bytes.Add(93);
+                    else if(l == rac)
+                        bytes.Add(44);
+                    else if(l == wac)
+                        bytes.Add(46);
+                    else
+                        Console.WriteLine($"Did not recognize instruction \"{l}\", replaced it with a nop.");
+                }
+                File.WriteAllBytes(output, bytes.ToArray());
+            }
+            else if(args[0] == "bin2bfk")
+            {
+                byte[] bytes = File.ReadAllBytes(input);
+                List<byte> bts = new List<byte>();
+                foreach(byte b in bytes)
+                {
+                    if(b == 0)
+                        continue;
+                    else if(b == 1)
+                        bts.Add(43);
+                    else if(b == 2)
+                        bts.Add(45);
+                    else if(b == 3)
+                        bts.Add(60);
+                    else if(b == 4)
+                        bts.Add(62);
+                    else if(b == 5)
+                        bts.Add(91);
+                    else if(b == 6)
+                        bts.Add(93);
+                    else if(b == 7)
+                        bts.Add(44);
+                    else if(b == 8)
+                        bts.Add(46);
+                    else
+                        Console.WriteLine($"Did not recognize binary code {b.ToString("B8")}, replaced it with a nop.");
+                }
+                File.WriteAllBytes(output, bts);
+            }
+            else
+            {
+                Console.WriteLine("Unrecognized operation.");
+                Environment.Exit(1);
             }
         }
     }
