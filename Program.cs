@@ -36,6 +36,8 @@ namespace ManagedAsmfuck
                 Console.WriteLine("    runabin");
                 Console.WriteLine("    asm2bfk");
                 Console.WriteLine("    bin2bfk");
+                Console.WriteLine("    bfk2asm");
+                Console.WriteLine("    bfk2bin");
                 Console.WriteLine("[outputfile] can be left out if the operation is runabin");
                 Environment.Exit(1);
             }
@@ -156,21 +158,21 @@ namespace ManagedAsmfuck
                 {
                     if(l == "" || l == nop)
                         continue;
-                    else if(l == inc)
+                    else if(l.StartsWith(inc))
                         bytes.Add(43);
-                    else if(l == dec)
+                    else if(l.StartsWith(dec))
                         bytes.Add(45);
-                    else if(l == tsl)
+                    else if(l.StartsWith(tsl))
                         bytes.Add(60);
-                    else if(l == tsr)
+                    else if(l.StartsWith(tsr))
                         bytes.Add(62);
-                    else if(l == sjp)
+                    else if(l.StartsWith(sjp))
                         bytes.Add(91);
-                    else if(l == jpb)
+                    else if(l.StartsWith(jpb))
                         bytes.Add(93);
-                    else if(l == rac)
+                    else if(l.StartsWith(rac))
                         bytes.Add(44);
-                    else if(l == wac)
+                    else if(l.StartsWith(wac))
                         bytes.Add(46);
                     else
                         Console.WriteLine($"Did not recognize instruction \"{l}\", replaced it with a nop.");
@@ -204,7 +206,59 @@ namespace ManagedAsmfuck
                     else
                         Console.WriteLine($"Did not recognize binary code {b.ToString("B8")}, replaced it with a nop.");
                 }
-                File.WriteAllBytes(output, bts);
+                File.WriteAllBytes(output, bts.ToArray());
+            }
+            else if(args[0] == "bfk2asm")
+            {
+                byte[] bytes = File.ReadAllBytes(input);
+                List<string> s = new List<string>();
+                foreach(byte b in bytes)
+                {
+                    if(b == 43)
+                        s.Add(inc);
+                    else if(b == 45)
+                        s.Add(dec);
+                    else if(b == 60)
+                        s.Add(tsl);
+                    else if(b == 62)
+                        s.Add(tsr);
+                    else if(b == 91)
+                        s.Add(sjp);
+                    else if(b == 93)
+                        s.Add(jpb);
+                    else if(b == 44)
+                        s.Add(rac);
+                    else if(b == 46)
+                        s.Add(wac);
+                    //In-code comments are pretty common in Brainfuck, so we don't filter
+                }
+                File.WriteAllLines(output, s.ToArray());
+            }
+            else if(args[0] == "bfk2bin")
+            {
+                byte[] bytes = File.ReadAllBytes(input);
+                List<byte> bts = new List<byte>();
+                foreach(byte b in bytes)
+                {
+                    if(b == 43)
+                        bts.Add(1);
+                    else if(b == 45)
+                        bts.Add(2);
+                    else if(b == 60)
+                        bts.Add(3);
+                    else if(b == 62)
+                        bts.Add(4);
+                    else if(b == 91)
+                        bts.Add(5);
+                    else if(b == 93)
+                        bts.Add(6);
+                    else if(b == 44)
+                        bts.Add(7);
+                    else if(b == 46)
+                        bts.Add(8);
+                    //In-code comments are pretty common in Brainfuck, so we don't filter
+                }
+                File.WriteAllBytes(output, bts.ToArray());
             }
             else
             {
