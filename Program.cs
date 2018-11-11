@@ -1,7 +1,7 @@
 ﻿//instruction|description          |brainfuck operator|binary code
 //nop        |no operation         |                  |0
-//inc        |increment at tape pos|+                 |1
-//dec        |decrement at tape pos|-                 |2
+//inc        |increment at tp      |+                 |1
+//dec        |decrement at tp      |-                 |2
 //tsl        |tape shift left      |<                 |3
 //tsr        |tape shift right     |>                 |4
 //sjp        |set jump position    |[                 |5
@@ -18,7 +18,6 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
-using System.Text;
 
 namespace ManagedAsmfuck
 {
@@ -26,9 +25,10 @@ namespace ManagedAsmfuck
     {
         static void Main(string[] args)
         {
-            if (args.Length < 2 || (args.Length < 3 && args[0] != "runabin"))
+            if (args.Length < 2 ||
+                (args.Length < 3 && args[0] != "runabin"))
             {
-                Console.WriteLine("Usage: dotnet run ManagedAsmfuck.dll [operation] [inputfile] [outputfile]");
+                Console.WriteLine("Usage: dotnet ManagedAsmfuck.dll [operation] [inputfile] {outputfile}");
                 Console.WriteLine("Operations:");
                 Console.WriteLine("    asm2bin");
                 Console.WriteLine("    bin2asm");
@@ -38,7 +38,8 @@ namespace ManagedAsmfuck
                 Console.WriteLine("    bin2bfk");
                 Console.WriteLine("    bfk2asm");
                 Console.WriteLine("    bfk2bin");
-                Console.WriteLine("[outputfile] can be left out if the operation is runabin");
+                Console.WriteLine("    optimiz");
+                Console.WriteLine("{outputfile} can be left out if the operation is runabin");
                 Environment.Exit(1);
             }
             const string nop = "nop";
@@ -59,9 +60,7 @@ namespace ManagedAsmfuck
                 List<byte> bytes = new List<byte>();
                 foreach (string l in lines)
                 {
-                    if(l == "")
-                        continue;
-                    else if(l == nop)
+                    if(l == nop)
                         bytes.Add(0);
                     else if(l == inc)
                         bytes.Add(1);
@@ -80,10 +79,7 @@ namespace ManagedAsmfuck
                     else if(l == wac)
                         bytes.Add(8);
                     else
-                    {
-                        Console.WriteLine($"Did not recognize instruction \"{l}\", replaced it with a nop.");
                         bytes.Add(0);
-                    }
                 }
                 File.WriteAllBytes(output, bytes.ToArray());
             }
@@ -112,10 +108,7 @@ namespace ManagedAsmfuck
                     else if(b == 8)
                         lines.Add(wac);
                     else
-                    {
-                        Console.WriteLine($"Did not recognize binary code {b.ToString("B8")}, replaced it with a nop.");
                         lines.Add(nop);
-                    }
                 }
                 File.WriteAllLines(output, lines);
             }
@@ -125,30 +118,7 @@ namespace ManagedAsmfuck
             }
             else if(args[0] == "runabin")
             {
-                byte[] bytes = File.ReadAllBytes(input);
-                sbyte[] t = new sbyte[tapelen];
-                int tp = tapelen / 2;
-                int jp = -1;
-                for(int ip = 0; ip < bytes.Length; ip++)
-                {
-                    byte b = bytes[ip];
-                    if(b == 1)
-                        unchecked{t[tp]++;}
-                    else if(b == 2)
-                        unchecked{t[tp]--;}
-                    else if(b == 3)
-                        unchecked{tp--;}
-                    else if(b == 4)
-                        unchecked{tp++;}
-                    else if(b == 5)
-                        jp = ip;
-                    else if(b == 6 && t[tp] != 0)
-                        ip = jp;
-                    else if(b == 7)
-                        t[tp] = (sbyte)Console.ReadKey(true).KeyChar;
-                    else if(b == 8)
-                        Console.Write((char)t[tp]);
-                }
+                ASMVM.Run(input, tapelen);
             }
             else if(args[0] == "asm2bfk")
             {
@@ -156,11 +126,11 @@ namespace ManagedAsmfuck
                 List<byte> bytes = new List<byte>();
                 foreach (string l in lines)
                 {
-                    if(l == "" || l == nop)
+                    if (l == "" || l == nop)
                         continue;
-                    else if(l.StartsWith(inc))
+                    else if (l[0] == 'i' && l[1] == 'n' && l[2] == 'c')
                         bytes.Add(43);
-                    else if(l.StartsWith(dec))
+                    else if(l[0] == 'd' && l[1] == 'e' && l[2] == 'c')
                         bytes.Add(45);
                     else if(l.StartsWith(tsl))
                         bytes.Add(60);
@@ -236,29 +206,45 @@ namespace ManagedAsmfuck
             }
             else if(args[0] == "bfk2bin")
             {
-                byte[] bytes = File.ReadAllBytes(input);
-                List<byte> bts = new List<byte>();
-                foreach(byte b in bytes)
+                Stream i = File.Open(input, FileMode.Open, FileAccess.Read);
+                Stream o = File.Open(output, FileMode.Create, FileAccess.Write);
+                int j;
+                while ((j = i.ReadByte()) != -1)
                 {
-                    if(b == 43)
-                        bts.Add(1);
-                    else if(b == 45)
-                        bts.Add(2);
-                    else if(b == 60)
-                        bts.Add(3);
-                    else if(b == 62)
-                        bts.Add(4);
-                    else if(b == 91)
-                        bts.Add(5);
-                    else if(b == 93)
-                        bts.Add(6);
-                    else if(b == 44)
-                        bts.Add(7);
-                    else if(b == 46)
-                        bts.Add(8);
-                    //In-code comments are pretty common in Brainfuck, so we don't filter
+                    if (j == 43)
+                        i.WriteByte(1);
+                    else if (j == 45)
+                        i.WriteByte(2);
+                    else if (j == 60)
+                        i.WriteByte(3);
+                    else if (j == 62)
+                        i.WriteByte(4);
+                    else if (j == 91)
+                        i.WriteByte(5);
+                    else if (j == 93)
+                        i.WriteByte(6);
+                    else if (j == 44)
+                        i.WriteByte(7);
+                    else if (j == 46)
+                        i.WriteByte(8);
+                    else
+                        i.WriteByte(0);
                 }
-                File.WriteAllBytes(output, bts.ToArray());
+                i.Close();
+                o.Close();
+            }
+            else if(args[0] == "optimiz")
+            {
+                Stream i = File.Open(input, FileMode.Open, FileAccess.Read);
+                Stream o = File.Open(output, FileMode.Create, FileAccess.Write);
+                int j;
+                while ((j = i.ReadByte()) != -1)
+                {
+                    if (j != 0)
+                        o.WriteByte((byte)j);
+                }
+                i.Close();
+                o.Close();
             }
             else
             {

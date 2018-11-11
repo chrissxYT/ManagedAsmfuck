@@ -681,28 +681,30 @@
     ]
   },
   "packageFolders": {
-    "/home/chrissx/.nuget/packages/": {},
-    "/home/chrissx/dotnet/sdk/NuGetFallbackFolder": {}
+    "C:\\Users\\chrissicx\\.nuget\\packages\\": {},
+    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/chrissx/ManagedAsmfuck/ManagedAsmfuck.csproj",
+      "projectUniqueName": "C:\\Users\\chrissicx\\source\\repos\\ManagedAsmfuck\\ManagedAsmfuck.csproj",
       "projectName": "ManagedAsmfuck",
-      "projectPath": "/home/chrissx/ManagedAsmfuck/ManagedAsmfuck.csproj",
-      "packagesPath": "/home/chrissx/.nuget/packages/",
-      "outputPath": "/home/chrissx/ManagedAsmfuck/obj/",
+      "projectPath": "C:\\Users\\chrissicx\\source\\repos\\ManagedAsmfuck\\ManagedAsmfuck.csproj",
+      "packagesPath": "C:\\Users\\chrissicx\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\chrissicx\\source\\repos\\ManagedAsmfuck\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "/home/chrissx/dotnet/sdk/NuGetFallbackFolder"
+        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "/home/chrissx/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\chrissicx\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp2.1"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
