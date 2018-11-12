@@ -56,32 +56,7 @@ namespace ManagedAsmfuck
             string output = args.Length > 2 ? args[2] : "nope this is not here";
             if (args[0] == "asm2bin")
             {
-                string[] lines = File.ReadAllLines(input);
-                List<byte> bytes = new List<byte>();
-                foreach (string l in lines)
-                {
-                    if(l == nop)
-                        bytes.Add(0);
-                    else if(l == inc)
-                        bytes.Add(1);
-                    else if(l == dec)
-                        bytes.Add(2);
-                    else if(l == tsl)
-                        bytes.Add(3);
-                    else if(l == tsr)
-                        bytes.Add(4);
-                    else if(l == sjp)
-                        bytes.Add(5);
-                    else if(l == jpb)
-                        bytes.Add(6);
-                    else if(l == rac)
-                        bytes.Add(7);
-                    else if(l == wac)
-                        bytes.Add(8);
-                    else
-                        bytes.Add(0);
-                }
-                File.WriteAllBytes(output, bytes.ToArray());
+                Compiler.Compile(input, output);
             }
             else if (args[0] == "bin2asm")
             {
@@ -200,51 +175,18 @@ namespace ManagedAsmfuck
                         s.Add(rac);
                     else if(b == 46)
                         s.Add(wac);
-                    //In-code comments are pretty common in Brainfuck, so we don't filter
+                    else
+                        s.Add(nop);
                 }
                 File.WriteAllLines(output, s.ToArray());
             }
             else if(args[0] == "bfk2bin")
             {
-                Stream i = File.Open(input, FileMode.Open, FileAccess.Read);
-                Stream o = File.Open(output, FileMode.Create, FileAccess.Write);
-                int j;
-                while ((j = i.ReadByte()) != -1)
-                {
-                    if (j == 43)
-                        i.WriteByte(1);
-                    else if (j == 45)
-                        i.WriteByte(2);
-                    else if (j == 60)
-                        i.WriteByte(3);
-                    else if (j == 62)
-                        i.WriteByte(4);
-                    else if (j == 91)
-                        i.WriteByte(5);
-                    else if (j == 93)
-                        i.WriteByte(6);
-                    else if (j == 44)
-                        i.WriteByte(7);
-                    else if (j == 46)
-                        i.WriteByte(8);
-                    else
-                        i.WriteByte(0);
-                }
-                i.Close();
-                o.Close();
+                Compiler.CompileBrainfuck(input, output);
             }
             else if(args[0] == "optimiz")
             {
-                Stream i = File.Open(input, FileMode.Open, FileAccess.Read);
-                Stream o = File.Open(output, FileMode.Create, FileAccess.Write);
-                int j;
-                while ((j = i.ReadByte()) != -1)
-                {
-                    if (j != 0)
-                        o.WriteByte((byte)j);
-                }
-                i.Close();
-                o.Close();
+                Optimizer.Optimize(input, output);
             }
             else
             {
