@@ -6,10 +6,13 @@ wac
 tsr
 inc
 inc
+nop
 inc
 inc
 inc
 inc
+tsl
+tsr
 inc
 inc
 inc

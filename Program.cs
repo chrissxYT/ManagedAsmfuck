@@ -9,15 +9,16 @@
 //rac        |read ascii char      |,                 |7
 //wac        |write ascii char     |.                 |8
 //
-//type   |var |name               |description
-//sbyte[]|t   |tape               |the tape that's your memory
-//int    |ip  |instruction pointer|is equal to x86's eip and AMD64's rip; points to the current instruction in the loaded asmfuck binary
-//int    |tp  |tape pointer       |points to your position on the tape
-//int    |jp  |jump pointer       |the instruction to jump after on jpb
+//type   |var|name               |description
+//sbyte[]|t  |tape               |the tape that's your memory
+//int    |ip |instruction pointer|is equal to x86's eip and AMD64's rip; points to the current instruction in the loaded asmfuck binary
+//int    |tp |tape pointer       |points to your position on the tape
+//int    |jp |jump pointer       |the instruction to jump after on jpb
 
 using System;
 using System.IO;
 using System.Collections.Generic;
+using static ManagedAsmfuck.Consts;
 
 namespace ManagedAsmfuck
 {
@@ -42,16 +43,6 @@ namespace ManagedAsmfuck
                 Console.WriteLine("{outputfile} can be left out if the operation is runabin");
                 Environment.Exit(1);
             }
-            const string nop = "nop";
-            const string inc = "inc";
-            const string dec = "dec";
-            const string tsl = "tsl";
-            const string tsr = "tsr";
-            const string sjp = "sjp";
-            const string jpb = "jpb";
-            const string rac = "rac";
-            const string wac = "wac";
-            const int tapelen = 50 * 1024 * 1024; // 50 MiB of tape length should be enough
             string input = args[1];
             string output = args.Length > 2 ? args[2] : "nope this is not here";
             if (args[0] == "asm2bin")
