@@ -6,6 +6,7 @@ using static ManagedAsmfuck.Consts;
 
 namespace ManagedAsmfuck
 {
+    //actually it's not an asm vm, it's a bin vm
     static class ASMVM
     {
         public static void Run(string file, int tapelen)

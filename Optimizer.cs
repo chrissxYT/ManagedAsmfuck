@@ -9,15 +9,8 @@ namespace ManagedAsmfuck
     {
         static List<byte> DeNop(List<byte> i)
         {
-            List<byte> o = new List<byte>();
-            foreach(byte b in i)
-            {
-                if(b != 0)
-                {
-                    o.Add(b);
-                }
-            }
-            return o;
+            i.RemoveAll((b) => b == 0);
+            return i;
         }
 
         static List<byte> MoveReduce(List<byte> i, (int, int) used)

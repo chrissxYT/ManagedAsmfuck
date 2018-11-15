@@ -34,69 +34,45 @@ namespace ManagedAsmfuck
                 Console.WriteLine("    asm2bin");
                 Console.WriteLine("    bin2asm");
                 Console.WriteLine("    bin2elf");
-                Console.WriteLine("    runabin");
+                Console.WriteLine("    r[unabin]");
                 Console.WriteLine("    asm2bfk");
                 Console.WriteLine("    bin2bfk");
                 Console.WriteLine("    bfk2asm");
                 Console.WriteLine("    bfk2bin");
-                Console.WriteLine("    optimiz");
+                Console.WriteLine("    o[ptimiz]");
                 Console.WriteLine("{outputfile} can be left out if the operation is runabin");
                 Environment.Exit(1);
             }
+            string op = args[0];
             string input = args[1];
             string output = args.Length > 2 ? args[2] : "nope this is not here";
-            if (args[0] == "asm2bin")
+            if (op == "asm2bin")
             {
                 Compiler.Compile(input, output);
             }
-            else if (args[0] == "bin2asm")
+            else if(op == "bin2asm")
             {
-                byte[] bytes = File.ReadAllBytes(input);
-                List<string> lines = new List<string>();
-                foreach(byte b in bytes)
-                {
-                    if(b == 0)
-                        lines.Add(nop);
-                    else if(b == 1)
-                        lines.Add(inc);
-                    else if(b == 2)
-                        lines.Add(dec);
-                    else if(b == 3)
-                        lines.Add(tsl);
-                    else if(b == 4)
-                        lines.Add(tsr);
-                    else if(b == 5)
-                        lines.Add(sjp);
-                    else if(b == 6)
-                        lines.Add(jpb);
-                    else if(b == 7)
-                        lines.Add(rac);
-                    else if(b == 8)
-                        lines.Add(wac);
-                    else
-                        lines.Add(nop);
-                }
-                File.WriteAllLines(output, lines);
+                Decompiler.Decompile(input, output);
             }
-            else if(args[0] == "bin2elf")
+            else if(op == "bin2elf")
             {
                 Console.WriteLine("Not implemented yet, because we haven't figured out how to compile an ELF in C#.");
             }
-            else if(args[0] == "runabin")
+            else if(op.StartsWith("r"))
             {
                 ASMVM.Run(input, tapelen);
             }
-            else if(args[0] == "asm2bfk")
+            else if(op == "asm2bfk")
             {
                 string[] lines = File.ReadAllLines(input);
                 List<byte> bytes = new List<byte>();
                 foreach (string l in lines)
                 {
-                    if (l == "" || l == nop)
+                    if (l == nullstr || l == nop)
                         continue;
-                    else if (l[0] == 'i' && l[1] == 'n' && l[2] == 'c')
+                    else if (l.StartsWith(inc))
                         bytes.Add(43);
-                    else if(l[0] == 'd' && l[1] == 'e' && l[2] == 'c')
+                    else if(l.StartsWith(dec))
                         bytes.Add(45);
                     else if(l.StartsWith(tsl))
                         bytes.Add(60);
@@ -110,20 +86,16 @@ namespace ManagedAsmfuck
                         bytes.Add(44);
                     else if(l.StartsWith(wac))
                         bytes.Add(46);
-                    else
-                        Console.WriteLine($"Did not recognize instruction \"{l}\", replaced it with a nop.");
                 }
                 File.WriteAllBytes(output, bytes.ToArray());
             }
-            else if(args[0] == "bin2bfk")
+            else if(op == "bin2bfk")
             {
                 byte[] bytes = File.ReadAllBytes(input);
                 List<byte> bts = new List<byte>();
                 foreach(byte b in bytes)
                 {
-                    if(b == 0)
-                        continue;
-                    else if(b == 1)
+                    if(b == 1)
                         bts.Add(43);
                     else if(b == 2)
                         bts.Add(45);
@@ -139,12 +111,10 @@ namespace ManagedAsmfuck
                         bts.Add(44);
                     else if(b == 8)
                         bts.Add(46);
-                    else
-                        Console.WriteLine($"Did not recognize binary code {b.ToString("B8")}, replaced it with a nop.");
                 }
                 File.WriteAllBytes(output, bts.ToArray());
             }
-            else if(args[0] == "bfk2asm")
+            else if(op == "bfk2asm")
             {
                 byte[] bytes = File.ReadAllBytes(input);
                 List<string> s = new List<string>();
@@ -171,11 +141,11 @@ namespace ManagedAsmfuck
                 }
                 File.WriteAllLines(output, s.ToArray());
             }
-            else if(args[0] == "bfk2bin")
+            else if(op == "bfk2bin")
             {
                 Compiler.CompileBrainfuck(input, output);
             }
-            else if(args[0] == "optimiz")
+            else if(op.StartsWith("o"))
             {
                 Optimizer.Optimize(input, output);
             }
